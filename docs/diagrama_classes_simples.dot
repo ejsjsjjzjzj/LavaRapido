@@ -1,0 +1,65 @@
+digraph Simples {
+  rankdir=TB;
+  nodesep=0.7;
+  ranksep=0.8;
+  node [shape=plain, fontname="Helvetica", fontsize=14];
+  edge [fontname="Helvetica", fontsize=11, arrowsize=0.9];
+
+  // ---- VIEW ----
+  ClienteView     [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dbeafe"><tr><td><b>ClienteView</b></td></tr></table>>];
+  AgendaView      [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dbeafe"><tr><td><b>AgendaView</b></td></tr></table>>];
+  TipoServicoView [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dbeafe"><tr><td><b>TipoServicoView</b></td></tr></table>>];
+
+  // ---- CONTROLLER ----
+  ClienteController     [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#fef3c7"><tr><td><b>ClienteController</b></td></tr></table>>];
+  AgendaController      [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#fef3c7"><tr><td><b>AgendaController</b></td></tr></table>>];
+  TipoServicoController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#fef3c7"><tr><td><b>TipoServicoController</b></td></tr></table>>];
+
+  // ---- SERVICOS (regras de negócio) ----
+  ClienteService     [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dcfce7"><tr><td><b>ClienteService</b></td></tr></table>>];
+  AgendamentoService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dcfce7"><tr><td><b>AgendamentoService</b></td></tr></table>>];
+  TipoServicoService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="8" bgcolor="#dcfce7"><tr><td><b>TipoServicoService</b></td></tr></table>>];
+
+  // ---- ENTIDADES ----
+  Cliente [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="6" bgcolor="white">
+    <tr><td bgcolor="#bbf7d0"><b>Cliente</b></td></tr>
+    <tr><td align="left">id<br align="left"/>nome<br align="left"/>cpf<br align="left"/>telefone<br align="left"/>email<br align="left"/>placaVeiculo<br align="left"/></td></tr></table>>];
+  Agendamento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="6" bgcolor="white">
+    <tr><td bgcolor="#bbf7d0"><b>Agendamento</b></td></tr>
+    <tr><td align="left">id<br align="left"/>cliente<br align="left"/>tipoServico<br align="left"/>dataHora<br align="left"/>status<br align="left"/></td></tr></table>>];
+  TipoServico [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="6" bgcolor="white">
+    <tr><td bgcolor="#bbf7d0"><b>TipoServico</b></td></tr>
+    <tr><td align="left">id<br align="left"/>nome<br align="left"/>descricao<br align="left"/>preco<br align="left"/></td></tr></table>>];
+
+  // Cada camada na mesma linha
+  { rank=same; ClienteView; AgendaView; TipoServicoView; }
+  { rank=same; ClienteController; AgendaController; TipoServicoController; }
+  { rank=same; ClienteService; AgendamentoService; TipoServicoService; }
+  { rank=same; Cliente; Agendamento; TipoServico; }
+
+  // Ordem horizontal (Cliente | Agenda | Tipo de serviço)
+  ClienteView -> AgendaView -> TipoServicoView [style=invis];
+  ClienteController -> AgendaController -> TipoServicoController [style=invis];
+  ClienteService -> AgendamentoService -> TipoServicoService [style=invis];
+  Cliente -> Agendamento -> TipoServico [style=invis];
+
+  // Controller controla a View
+  ClienteController -> ClienteView [label=" controla"];
+  AgendaController -> AgendaView;
+  TipoServicoController -> TipoServicoView;
+  { edge [constraint=false]; }
+
+  // Controller usa o Service
+  ClienteController -> ClienteService [dir=forward];
+  AgendaController -> AgendamentoService;
+  TipoServicoController -> TipoServicoService;
+
+  // Service trabalha com a entidade
+  ClienteService -> Cliente;
+  AgendamentoService -> Agendamento;
+  TipoServicoService -> TipoServico;
+
+  // Relação entre as entidades
+  Agendamento -> Cliente [label=" 1 cliente", constraint=false];
+  Agendamento -> TipoServico [label=" 1 serviço", constraint=false];
+}

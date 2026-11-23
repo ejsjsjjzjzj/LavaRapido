@@ -1,0 +1,122 @@
+digraph LavaRapido {
+  rankdir=TB;
+  fontname="Helvetica";
+  nodesep=0.35;
+  ranksep=0.9;
+  splines=true;
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, arrowsize=0.8];
+
+  // ---------------- VIEW ----------------
+  subgraph cluster_view {
+    label="pacote view"; style="rounded,filled"; fillcolor="#eff6ff"; color="#3b82f6"; fontsize=12;
+    MainView [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dbeafe"><b>MainView</b><br/>«JFrame»</td></tr>
+      <tr><td align="left">- abas : JTabbedPane</td></tr></table>>];
+    AgendaView [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dbeafe"><b>AgendaView</b><br/>«JPanel»</td></tr>
+      <tr><td align="left">- cmbCliente : JComboBox&lt;Cliente&gt;<br align="left"/>- cmbTipo : JComboBox&lt;TipoServico&gt;<br align="left"/>- txtData, txtHora : JTextField<br align="left"/>- tabela : JTable<br align="left"/></td></tr>
+      <tr><td align="left">+ getClienteSelecionado() : Cliente<br align="left"/>+ getTipoSelecionado() : TipoServico<br align="left"/>+ getData() / getHora() : String<br align="left"/>+ atualizarTabela(List, String)<br align="left"/>+ mostrarErro(String)<br align="left"/></td></tr></table>>];
+    ClienteView [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dbeafe"><b>ClienteView</b><br/>«JPanel»</td></tr>
+      <tr><td align="left">- txtNome, txtCpf, txtTelefone,<br align="left"/>   txtEmail, txtPlaca : JTextField<br align="left"/>- tabela : JTable<br align="left"/></td></tr>
+      <tr><td align="left">+ preencher(Cliente)<br align="left"/>+ atualizarTabela(List&lt;Cliente&gt;)<br align="left"/>+ getIdSelecionado() : long<br align="left"/></td></tr></table>>];
+    TipoServicoView [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dbeafe"><b>TipoServicoView</b><br/>«JPanel»</td></tr>
+      <tr><td align="left">- txtNome, txtDescricao,<br align="left"/>   txtPreco : JTextField<br align="left"/>- tabela : JTable<br align="left"/></td></tr>
+      <tr><td align="left">+ preencher(TipoServico)<br align="left"/>+ atualizarTabela(List&lt;TipoServico&gt;)<br align="left"/>+ getIdSelecionado() : long<br align="left"/></td></tr></table>>];
+  }
+
+  // ---------------- CONTROLLER ----------------
+  subgraph cluster_controller {
+    label="pacote controller"; style="rounded,filled"; fillcolor="#fffbeb"; color="#f59e0b"; fontsize=12;
+    AgendaController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#fef3c7"><b>AgendaController</b></td></tr>
+      <tr><td align="left">- view : AgendaView<br align="left"/>- agendamentoService : AgendamentoService<br align="left"/>- clienteService : ClienteService<br align="left"/>- tipoServicoService : TipoServicoService<br align="left"/></td></tr>
+      <tr><td align="left">- agendar()<br align="left"/>- salvarAlteracao()<br align="left"/>- cancelar() / concluir()<br align="left"/>+ atualizarTabela()<br align="left"/>+ aoAlterarDados()<br align="left"/></td></tr></table>>];
+    ClienteController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#fef3c7"><b>ClienteController</b></td></tr>
+      <tr><td align="left">- view : ClienteView<br align="left"/>- service : ClienteService<br align="left"/></td></tr>
+      <tr><td align="left">- salvar()<br align="left"/>- excluir()<br align="left"/>+ atualizarTabela()<br align="left"/></td></tr></table>>];
+    TipoServicoController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#fef3c7"><b>TipoServicoController</b></td></tr>
+      <tr><td align="left">- view : TipoServicoView<br align="left"/>- service : TipoServicoService<br align="left"/></td></tr>
+      <tr><td align="left">- salvar()<br align="left"/>- excluir()<br align="left"/>+ atualizarTabela()<br align="left"/></td></tr></table>>];
+  }
+
+  // ---------------- MODEL: SERVICOS ----------------
+  subgraph cluster_service {
+    label="pacote model.service (regras de negócio e persistência)"; style="rounded,filled"; fillcolor="#f0fdf4"; color="#22c55e"; fontsize=12;
+    AgendamentoService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>AgendamentoService</b></td></tr>
+      <tr><td align="left">+ DURACAO_MINUTOS : int<br align="left"/>+ ABERTURA, FECHAMENTO : LocalTime<br align="left"/></td></tr>
+      <tr><td align="left">+ agendar(Cliente, TipoServico, LocalDateTime)<br align="left"/>+ editar(long, Cliente, TipoServico, LocalDateTime)<br align="left"/>+ cancelar(long) / concluir(long)<br align="left"/>+ listarPorPeriodo(LocalDate, LocalDate)<br align="left"/>- validar(...)  «conflitos na agenda»<br align="left"/></td></tr></table>>];
+    ClienteService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>ClienteService</b></td></tr>
+      <tr><td align="left">+ cadastrar(nome, cpf, telefone, email, placa)<br align="left"/>+ editar(long, ...)<br align="left"/>+ excluir(long)<br align="left"/>+ listar() : List&lt;Cliente&gt;<br align="left"/>+ buscarPorId(long) : Cliente<br align="left"/></td></tr></table>>];
+    TipoServicoService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>TipoServicoService</b></td></tr>
+      <tr><td align="left">+ cadastrar(nome, descricao, preco)<br align="left"/>+ editar(long, ...)<br align="left"/>+ excluir(long)<br align="left"/>+ listar() : List&lt;TipoServico&gt;<br align="left"/>+ buscarPorId(long) : TipoServico<br align="left"/></td></tr></table>>];
+    Repositorio [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>Repositorio</b><br/>«Serializable»</td></tr>
+      <tr><td align="left">- clientes : List&lt;Cliente&gt;<br align="left"/>- tiposServico : List&lt;TipoServico&gt;<br align="left"/>- agendamentos : List&lt;Agendamento&gt;<br align="left"/></td></tr>
+      <tr><td align="left">+ {static} carregar(Path) : Repositorio<br align="left"/>~ salvar()<br align="left"/></td></tr></table>>];
+    Validador [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>Validador</b></td></tr>
+      <tr><td align="left">+ {static} cpfValido(String) : boolean<br align="left"/>+ {static} emailValido(String) : boolean<br align="left"/>+ {static} placaValida(String) : boolean<br align="left"/>+ {static} telefoneValido(String) : boolean<br align="left"/></td></tr></table>>];
+    ValidacaoException [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#dcfce7"><b>ValidacaoException</b><br/>«Exception»</td></tr></table>>];
+  }
+
+  // ---------------- MODEL: ENTIDADES ----------------
+  subgraph cluster_model {
+    label="pacote model (entidades)"; style="rounded,filled"; fillcolor="#f0fdf4"; color="#22c55e"; fontsize=12;
+    Agendamento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#bbf7d0"><b>Agendamento</b></td></tr>
+      <tr><td align="left">- id : long<br align="left"/>- cliente : Cliente<br align="left"/>- tipoServico : TipoServico<br align="left"/>- dataHora : LocalDateTime<br align="left"/>- status : StatusAgendamento<br align="left"/></td></tr></table>>];
+    Cliente [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#bbf7d0"><b>Cliente</b></td></tr>
+      <tr><td align="left">- id : long<br align="left"/>- nome : String<br align="left"/>- cpf : String<br align="left"/>- telefone : String<br align="left"/>- email : String<br align="left"/>- placaVeiculo : String<br align="left"/></td></tr></table>>];
+    TipoServico [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#bbf7d0"><b>TipoServico</b></td></tr>
+      <tr><td align="left">- id : long<br align="left"/>- nome : String<br align="left"/>- descricao : String<br align="left"/>- preco : double<br align="left"/></td></tr></table>>];
+    StatusAgendamento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="white">
+      <tr><td bgcolor="#bbf7d0">«enumeration»<br/><b>StatusAgendamento</b></td></tr>
+      <tr><td align="left">AGENDADO<br align="left"/>CONCLUIDO<br align="left"/>CANCELADO<br align="left"/></td></tr></table>>];
+  }
+
+  // ---------------- RELACIONAMENTOS ----------------
+  // View contém views
+  MainView -> AgendaView [arrowhead=odiamond, dir=back, arrowtail=odiamond, label=""];
+  MainView -> ClienteView [arrowtail=odiamond, dir=back];
+  MainView -> TipoServicoView [arrowtail=odiamond, dir=back];
+
+  // Controller -> View (controller conhece a view que controla)
+  AgendaView -> AgendaController [dir=back, arrowtail=vee, label="1"];
+  ClienteView -> ClienteController [dir=back, arrowtail=vee, label="1"];
+  TipoServicoView -> TipoServicoController [dir=back, arrowtail=vee, label="1"];
+
+  // Controller -> Service
+  AgendaController -> AgendamentoService [arrowhead=vee];
+  AgendaController -> ClienteService [arrowhead=vee];
+  AgendaController -> TipoServicoService [arrowhead=vee];
+  ClienteController -> ClienteService [arrowhead=vee];
+  TipoServicoController -> TipoServicoService [arrowhead=vee];
+
+  // Service -> Repositorio / Validador / Exception
+  AgendamentoService -> Repositorio [arrowhead=vee];
+  ClienteService -> Repositorio [arrowhead=vee];
+  TipoServicoService -> Repositorio [arrowhead=vee];
+  ClienteService -> Validador [arrowhead=vee, style=dashed, label="«usa»"];
+  AgendamentoService -> ValidacaoException [arrowhead=vee, style=dashed, label="«lança»"];
+
+  // Repositorio agrega entidades
+  Repositorio -> Cliente [arrowtail=odiamond, dir=back, headlabel="0..*", labelangle=-20, labeldistance=2.2];
+  Repositorio -> TipoServico [arrowtail=odiamond, dir=back, headlabel="0..*", labelangle=20, labeldistance=2.2];
+  Repositorio -> Agendamento [arrowtail=odiamond, dir=back, headlabel="0..*", labelangle=20, labeldistance=2.2];
+
+  // Associações do modelo
+  Agendamento -> Cliente [arrowhead=vee, taillabel="0..*", headlabel="1", labeldistance=2.2];
+  Agendamento -> TipoServico [arrowhead=vee, taillabel="0..*", headlabel="1", labeldistance=2.2];
+  Agendamento -> StatusAgendamento [arrowhead=vee, style=dashed];
+}
