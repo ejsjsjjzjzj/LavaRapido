@@ -35,4 +35,4 @@ No NetBeans: Arquivo > Abrir Projeto > selecione a pasta do projeto > Executar P
 ![Diagrama de sequência](docs/diagrama_sequencia.png)
 
 ## Documentação
-A documentação completa (explicação dos diagramas, arquitetura MVC e instruções de execução) está em [Documentação_LavaRapido.docx](Documenta%C3%A7%C3%A3o_LavaRapido.docx).
+A documentação completa (explicação dos diagramas, arquitetura MVC e instruções de execução) está em [Documentacao_LavaRapido.docx](Documentacao_LavaRapido.docx).
